@@ -1,0 +1,11 @@
+//
+// Created by wj on 22. 4. 30.
+//
+
+#ifndef CAMEL_PERCEPTION_HEIGHTMAP_HEIGHTMAP_ROS_HPP
+#define CAMEL_PERCEPTION_HEIGHTMAP_HEIGHTMAP_ROS_HPP
+
+#include "MapDataNodeROS.hpp"
+#include "MapTreeNodeROS.hpp"
+
+#endif //CAMEL_PERCEPTION_HEIGHTMAP_HEIGHTMAP_ROS_HPP
