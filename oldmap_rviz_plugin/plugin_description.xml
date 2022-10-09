@@ -1,0 +1,8 @@
+<library path="lib/libheightmap_rviz_plugin">
+  <class name="oldmap_rviz_plugin/Oldmap"
+         type="oldmap_rviz_plugin::OldmapDisplay"
+         base_class_type="rviz::Display">
+    <description>Displays oldmap_msgs/Oldmap. </description>
+    <message_type>oldmap_msgs/Oldmap</message_type>
+  </class>
+</library>

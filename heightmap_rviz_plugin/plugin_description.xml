@@ -1,8 +1,0 @@
-<library path="lib/libheightmap_rviz_plugin">
-  <class name="heightmap_rviz_plugin/Heightmap"
-         type="heightmap_rviz_plugin::HeightmapDisplay"
-         base_class_type="rviz::Display">
-    <description>Displays heightmap_msgs/Heightmap. </description>
-    <message_type>heightmap_msgs/Heightmap</message_type>
-  </class>
-</library>

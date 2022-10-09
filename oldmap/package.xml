@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>oldmap</name>
+  <version>1.0.0</version>
+  <description>Meta-package for Camel oldmap library.</description>
+
+  <maintainer email="lexqrt2@pusan.ac.kr">wj</maintainer>
+
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>oldmap_msgs</exec_depend>
+  <exec_depend>oldmap_core</exec_depend>
+  <exec_depend>oldmap_ros</exec_depend>
+  <exec_depend>oldmap_rviz_plugin</exec_depend>
+
+  <export>
+    <metapackage />
+  </export>
+
+</package>
