@@ -2,7 +2,7 @@
 // Created by wj on 22. 4. 19.
 //
 
-#ifndef COLDMAP_MAPDATANODEROS_HPP
+#ifndef OLDMAP_MAPDATANODEROS_HPP
 #define OLDMAP_MAPDATANODEROS_HPP
 
 //#include "../../../heightmap_core/include/heightmap_core/heightmap_core.h"

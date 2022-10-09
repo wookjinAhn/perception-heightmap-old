@@ -13,9 +13,9 @@
 #include <rviz/uniform_string_stream.h>
 #include <chrono>
 
-#include "heightmap_rviz_plugin/HeightmapVisual.hpp"
-#include <heightmap_core/heightmap_core.hpp>
-#include <heightmap_ros/heightmap_ros.hpp>
+#include "oldmap_rviz_plugin/OldmapVisual.hpp"
+#include <oldmap_core/oldmap_core.hpp>
+#include <oldmap_ros/oldmap_ros.hpp>
 
 namespace heightmap_rviz_plugin
 {

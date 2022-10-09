@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(camel-perception-heightmap-old)
+project(perception-heightmap-old)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 

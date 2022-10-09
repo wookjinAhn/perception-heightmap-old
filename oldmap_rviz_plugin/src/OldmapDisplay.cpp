@@ -15,8 +15,8 @@
 #include <rviz/properties/int_property.h>
 #include <rviz/frame_manager.h>
 
-#include "heightmap_rviz_plugin/HeightmapDisplay.hpp"
-#include "heightmap_rviz_plugin/HeightmapVisual.hpp"
+#include "oldmap_rviz_plugin/OldmapDisplay.hpp"
+#include "oldmap_rviz_plugin/OldmapVisual.hpp"
 
 namespace heightmap_rviz_plugin
 // Process when Add Heightmap plugin :  Constructor -> onInitialize (-> MFDClass::onInitialize(), updateHistoryLength())
