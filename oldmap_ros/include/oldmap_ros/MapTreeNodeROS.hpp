@@ -15,17 +15,17 @@
 namespace camel
 {
 
-class MapTreeNodeROS : public camel::MapTreeNode
-{
-public:
-	MapTreeNodeROS();
-	MapTreeNodeROS(MapDataNodeROS* mapDataNode);
-    MapTreeNodeROS(MapDataNodeROS* mapDataNode, BoundingBox boundingBox);
-	MapTreeNodeROS(BoundingBox& boundingBox, int depth, int capacity);
-	MapTreeNodeROS(BoundingBox& boundingBox, int depth);
-	MapTreeNodeROS(BoundingBox& boundingBox);
-	~MapTreeNodeROS();
-};
+    class MapTreeNodeROS : public camel::MapTreeNode
+    {
+    public:
+        MapTreeNodeROS();
+        MapTreeNodeROS(MapDataNodeROS* mapDataNode);
+        MapTreeNodeROS(MapDataNodeROS* mapDataNode, BoundingBox boundingBox);
+        MapTreeNodeROS(BoundingBox& boundingBox, int depth, int capacity);
+        MapTreeNodeROS(BoundingBox& boundingBox, int depth);
+        MapTreeNodeROS(BoundingBox& boundingBox);
+        ~MapTreeNodeROS();
+    };
 
 }
 

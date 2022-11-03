@@ -12,7 +12,7 @@ namespace camel
     {
     }
 
-	Point2::Point2(float x, float y)
+    Point2::Point2(float x, float y)
         : camelVector::Point2D(x, y)
     {
     }

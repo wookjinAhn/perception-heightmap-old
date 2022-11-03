@@ -10,12 +10,12 @@
 namespace camel
 {
 
-class Point2 : public camelVector::Point2D
-{
-public:
-	Point2();
-	Point2(float x, float z);
-};
+    class Point2 : public camelVector::Point2D
+    {
+    public:
+        Point2();
+        Point2(float x, float z);
+    };
 
 }
 

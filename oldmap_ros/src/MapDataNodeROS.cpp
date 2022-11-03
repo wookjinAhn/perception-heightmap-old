@@ -6,37 +6,37 @@
 
 namespace camel
 {
-	MapDataNodeROS::MapDataNodeROS()
-		: camel::MapDataNode()
-	{
+    MapDataNodeROS::MapDataNodeROS()
+        : camel::MapDataNode()
+    {
         BoundingBox positionRange(0, 0, 1.0f, 1.0f);
         mPositionRange = positionRange;
         std::cout << "positionRange : " << mPositionRange.GetX() << ", " << mPositionRange.GetZ() << ", " << mPositionRange.GetH() << ", " << mPositionRange.GetW() << std::endl;
-	}
+    }
 
-	MapDataNodeROS::~MapDataNodeROS()
-	{
-	}
+    MapDataNodeROS::~MapDataNodeROS()
+    {
+    }
 
-	void MapDataNodeROS::SetRotateDegree(double rotateDegree)
-	{
-		mRotateDegree = rotateDegree;
-	}
+    void MapDataNodeROS::SetRotateDegree(double rotateDegree)
+    {
+        mRotateDegree = rotateDegree;
+    }
 
-	double MapDataNodeROS::GetRotateDegree() const
-	{
-		return mRotateDegree;
-	}
+    double MapDataNodeROS::GetRotateDegree() const
+    {
+        return mRotateDegree;
+    }
 
-	void MapDataNodeROS::SetRotateRadian(double rotateRadian)
-	{
-		mRotateDegree = rotateRadian * R2D;
-	}
+    void MapDataNodeROS::SetRotateRadian(double rotateRadian)
+    {
+        mRotateDegree = rotateRadian * R2D;
+    }
 
-	double MapDataNodeROS::GetRotateRadian() const
-	{
-		return mRotateDegree * D2R;
-	}
+    double MapDataNodeROS::GetRotateRadian() const
+    {
+        return mRotateDegree * D2R;
+    }
 
     void MapDataNodeROS::SetDataRange(float w, float h)
     {
@@ -54,130 +54,96 @@ namespace camel
         return mPositionRange;
     }
 
-    void MapDataNodeROS::MakeMapToPointsWithOldData()
+    void MapDataNodeROS::FromMessage(sensor_msgs::PointCloud pointcloud_msg)
     {
-        std::cout << "MakeMapToPointsWithOldData" << std::endl;
-        std::cout << "GetMapDataPair size : " << GetMapDataPair().size() << std::endl;
-        for (auto iter = mOldMapData.begin(); iter != mOldMapData.end(); ++iter)
+        for (int i = 0; i < pointcloud_msg.points.size(); i++)
         {
-            GetMapDataPair().insert( {std::make_pair(iter->first.first, iter->first.second), iter->second} );
+            Point3 pointXYZ = { pointcloud_msg.points[i].x, pointcloud_msg.points[i].y, pointcloud_msg.points[i].z };
+            SetInputPoint(pointXYZ);
         }
-        std::cout << "GetMapDataPair size : " << GetMapDataPair().size() << std::endl;
-
-        MakeMapToPoints();
-//        for (auto iter = GetMapDataPair().begin(); iter != GetMapDataPair().end(); ++iter)
-//        {
-//            Point3 pointXYZ = { iter->first.first, iter->second, iter->first.second };
-//            mOutputPoints.push_back(pointXYZ);
-//        }
-        std::cout << "MakeMapToPointsWithOldData END" << std::endl;
     }
 
-	void MapDataNodeROS::FromMessage(sensor_msgs::PointCloud pointcloud_msg)
-	{
-		for(int i = 0; i < pointcloud_msg.points.size(); i++)
-		{
-			Point3 pointXYZ = { pointcloud_msg.points[i].x, pointcloud_msg.points[i].y, pointcloud_msg.points[i].z };
-            SetInputPoint(pointXYZ);
-		}
-	}
+    void MapDataNodeROS::ToMessage(std::string frame_id, sensor_msgs::PointCloud& output_pointcloud)        //camera1_depth_optical_frame
+    {
+        MakeMapToPoints();
 
-	void MapDataNodeROS::ToMessage(std::string frame_id, sensor_msgs::PointCloud& output_pointcloud)		//camera1_depth_optical_frame
-	{
-		MakeMapToPoints();
+        output_pointcloud.header.frame_id = frame_id;           // header
+        output_pointcloud.header.stamp = ros::Time::now();
+        output_pointcloud.points.resize(GetOutputPoints().size());     // points			//************************
 
-		output_pointcloud.header.frame_id = frame_id;           // header
-		output_pointcloud.header.stamp = ros::Time::now();
-		output_pointcloud.points.resize(GetOutputPoints().size());     // points			//************************
+        for (int i = 0; i < output_pointcloud.points.size(); i++)
+        {
+            output_pointcloud.points[i].x = GetOutputPoints()[i].GetX();                    //************************
+            output_pointcloud.points[i].y = GetOutputPoints()[i].GetY();                    //************************
+            output_pointcloud.points[i].z = GetOutputPoints()[i].GetZ();                    //************************
+        }
 
-		for (int i = 0; i < output_pointcloud.points.size(); i++)
-		{
-			output_pointcloud.points[i].x = GetOutputPoints()[i].GetX();					//************************
-			output_pointcloud.points[i].y = GetOutputPoints()[i].GetY();					//************************
-			output_pointcloud.points[i].z = GetOutputPoints()[i].GetZ();					//************************
-		}
+    }
 
-	}
+    void MapDataNodeROS::FromMessagePointCloud2(sensor_msgs::PointCloud2 pointcloud2_msgs)
+    {
+        sensor_msgs::PointCloud2ConstIterator<float> iter_x(pointcloud2_msgs, "x");
+        sensor_msgs::PointCloud2ConstIterator<float> iter_y(pointcloud2_msgs, "y");
+        sensor_msgs::PointCloud2ConstIterator<float> iter_z(pointcloud2_msgs, "z");
 
-
-
-	void MapDataNodeROS::FromMessagePointCloud2(sensor_msgs::PointCloud2 pointcloud2_msgs)
-	{
-//		MakeMapToPoints();
-
-		sensor_msgs::PointCloud2ConstIterator<float> iter_x(pointcloud2_msgs, "x");
-		sensor_msgs::PointCloud2ConstIterator<float> iter_y(pointcloud2_msgs, "y");
-		sensor_msgs::PointCloud2ConstIterator<float> iter_z(pointcloud2_msgs, "z");
-
-		for (; iter_x != iter_x.end(); ++iter_x, ++iter_y, ++iter_z){
-			// Check if the point is invalid
-			if (!std::isnan (*iter_x) && !std::isnan (*iter_y) && !std::isnan (*iter_z))
-			{
-				Point3 pointXYZ = {*iter_x, *iter_y, *iter_z};
+        for (; iter_x != iter_x.end(); ++iter_x, ++iter_y, ++iter_z)
+        {
+            // Check if the point is invalid
+            if (!std::isnan(*iter_x) && !std::isnan(*iter_y) && !std::isnan(*iter_z))
+            {
+                Point3 pointXYZ = { *iter_x, *iter_y, *iter_z };
                 SetInputPoint(pointXYZ);
-			}
-		}
-	}
+            }
+        }
+    }
 
+    void MapDataNodeROS::ToMessagePointCloud2(std::string frame_id, sensor_msgs::PointCloud2& output_pointcloud2)
+    {
+        MakeMapToPoints();
 
+        sensor_msgs::PointCloud pointcloud_msgs;
 
-	void MapDataNodeROS::ToMessagePointCloud2(std::string frame_id, sensor_msgs::PointCloud2& output_pointcloud2)
-	{
-// ======================= NEED TO !! ===========================
-// ======================= NEED TO !! ===========================
-// ======================= NEED TO !! ===========================
-// ======================= NEED TO !! ===========================
-// ======================= NEED TO !! ===========================
-	}
+        pointcloud_msgs.header.frame_id = frame_id;
+        pointcloud_msgs.header.stamp = ros::Time::now();
+        pointcloud_msgs.points.resize(GetOutputPoints().size());
 
-	void MapDataNodeROS::ToHeightmapMsgs(oldmap_msgs::Oldmap& heightmap_msgs, float cameraHeight, camel::Point3& odom)
-	{
+        for (int i = 0; i < pointcloud_msgs.points.size(); i++)
+        {
+            Point3 outData = GetOutputPoints()[i];
+            pointcloud_msgs.points[i].x = outData.GetX();
+            pointcloud_msgs.points[i].y = outData.GetY();
+            pointcloud_msgs.points[i].z = outData.GetZ();
+        }
+        sensor_msgs::convertPointCloudToPointCloud2(pointcloud_msgs, output_pointcloud2);
+    }
+
+    void MapDataNodeROS::ToHeightmapMsgs(std::string frame_id, oldmap_msgs::Oldmap& heightmap_msgs, float cameraHeight)
+    {
         std::cout << "ToHeightmapMsgs" << std::endl;
-//		MakeMapToPoints();
-        UpdateOldDataByOdom(odom);
-        MakeMapToPointsWithOldData();
+        MakeMapToPoints();
 
         std::cout << "ToHeightmapMsgs : to msg" << std::endl;
 
-		heightmap_msgs.header.frame_id = "t265_base_frame";           // header
-//		heightmap_msgs.header.frame_id = "depth_frame";           // header
-		heightmap_msgs.header.stamp = ros::Time::now();
-		heightmap_msgs.resolution = 0.03;
-		heightmap_msgs.points.resize(GetOutputPoints().size());
+        heightmap_msgs.header.frame_id = frame_id;           // header
+        heightmap_msgs.header.stamp = ros::Time::now();
+        heightmap_msgs.resolution = 0.03;
+        heightmap_msgs.points.resize(GetOutputPoints().size());
 
-		float rotationMatrix[3][3] = {{1.0f, 0.0f, 0.0f},
-									  {0.0f, (float)std::cos(mRotateDegree * D2R), (float)-std::sin(mRotateDegree * D2R)},
-									  {0.0f, (float)std::sin(mRotateDegree * D2R), (float)std::cos(mRotateDegree * D2R)}};
+        float rotationMatrix[3][3] = {{ 1.0f, 0.0f, 0.0f },
+                                      { 0.0f, (float)std::cos(mRotateDegree * D2R), (float)-std::sin(mRotateDegree * D2R) },
+                                      { 0.0f, (float)std::sin(mRotateDegree * D2R), (float)std::cos(mRotateDegree * D2R) }};
 
-		for (int i = 0; i < this->GetOutputPoints().size(); i++)
-		{
-			float x = GetOutputPoints()[i].GetX();
-			float y = GetOutputPoints()[i].GetY();
-			float z = GetOutputPoints()[i].GetZ();
-			heightmap_msgs.points[i].x = rotationMatrix[0][0] * x + rotationMatrix[0][1] *  y + rotationMatrix[0][2] * z;
-			heightmap_msgs.points[i].y = -(cameraHeight-(rotationMatrix[1][0] * x + rotationMatrix[1][1] * y + rotationMatrix[1][2] * z));
-			heightmap_msgs.points[i].z = rotationMatrix[2][0] * x + rotationMatrix[2][1] *  y + rotationMatrix[2][2] * z;
-
-            camel::Point3 pastPoint = {x, y, z};
-            mPastData.push_back(pastPoint);
-		}
-	}
-
-    void MapDataNodeROS::UpdateOldDataByOdom(camel::Point3& odomPosition)
-    {
-        std::cout << "UpdateOldDataByOdom" << std::endl;
-        float newPositionXRatio = static_cast<int>(odomPosition.GetX() / GetResolution());
-        float newPositionYRatio = static_cast<int>(odomPosition.GetY() / GetResolution());
-
-        for (int i = 0; i < mPastData.size(); i++)
+        for (int i = 0; i < this->GetOutputPoints().size(); i++)
         {
-            camel::Point3 oldPoint(mPastData[i].GetX() + (-newPositionYRatio) * GetResolution(), mPastData[i].GetY(), mPastData[i].GetZ() + newPositionXRatio * GetResolution());
+            float x = GetOutputPoints()[i].GetX();
+            float y = GetOutputPoints()[i].GetY();
+            float z = GetOutputPoints()[i].GetZ();
+            heightmap_msgs.points[i].x = rotationMatrix[0][0] * x + rotationMatrix[0][1] * y + rotationMatrix[0][2] * z;
+            heightmap_msgs.points[i].y = -(cameraHeight - (rotationMatrix[1][0] * x + rotationMatrix[1][1] * y + rotationMatrix[1][2] * z));
+            heightmap_msgs.points[i].z = rotationMatrix[2][0] * x + rotationMatrix[2][1] * y + rotationMatrix[2][2] * z;
 
-            if (mPositionRange.IsConstained(oldPoint))
-            {
-                mOldMapData.insert({ std::make_pair(oldPoint.GetNodeKey().GetX(), oldPoint.GetNodeKey().GetZ()), oldPoint.GetY() });
-            }
+            camel::Point3 pastPoint = { x, y, z };
+            mPastData.push_back(pastPoint);
         }
-        std::cout << "mOldMapData : " << mOldMapData.size() << std::endl;
     }
 }
