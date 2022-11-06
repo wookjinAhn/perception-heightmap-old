@@ -42,12 +42,14 @@ namespace camel
         void SetDepth(int depth);
         void SetCapacity(int capacity);
 
-        void InsertMapTreeNode(std::vector<Point3>& points);
-        void InsertMapTreeNode();
+        void Process(std::vector<Point3>& points);
 
     private:
         void subdivideNode();
         void insertNodeRecursive(Point3& point, MapDataNode* mapDataNode, int depth);
+
+        void insertMapTreeNode(std::vector<Point3>& points);
+        void insertMapTreeNode();
 
         MapDataNode* mMapDataNode = nullptr;
         BoundingBox mBoundindBox;

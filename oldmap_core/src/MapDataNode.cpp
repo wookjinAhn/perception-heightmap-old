@@ -83,6 +83,33 @@ namespace camel
     {
         return mOutputPoints;
     }
+    void MapDataNode::SetDefaultCameraPosition(float t265PoseZ, float d435PoseX, float d435PoseY, float d435PoseZ)
+    {
+        mCameraPosition[0] = t265PoseZ;
+        mCameraPosition[1] = GetResolution();
+        mCameraPosition[2] = d435PoseY;
+        mCameraPosition[3] = d435PoseZ;
+    }
+
+    void MapDataNode::SetCurrentOdom(float poseX, float poseY, float poseZ, float quaternionX, float quaternionY, float quaternionZ, float quaternionW)
+    {
+        mCurrentOdom[0] = poseX;
+        mCurrentOdom[1] = poseY;
+        mCurrentOdom[2] = poseZ;
+        mCurrentOdom[3] = quaternionX;
+        mCurrentOdom[4] = quaternionY;
+        mCurrentOdom[5] = quaternionZ;
+        mCurrentOdom[6] = quaternionW;
+    }
+
+    float* MapDataNode::GetDefaultCameraPosition()
+    {
+        return mCameraPosition;
+    }
+    float* MapDataNode::GetCurrentOdom()
+    {
+        return mCurrentOdom;
+    }
 
     void MapDataNode::SetInputPoint(Point3 point)
     {
@@ -155,7 +182,7 @@ namespace camel
     {
         for (auto iter = mMapDataPair.begin(); iter != mMapDataPair.end(); ++iter)
         {
-            Point3 pointXYZ = { iter->first.first, iter->second, iter->first.second };
+            Point3 pointXYZ = { iter->first.second, -(iter->first.first) , -(iter->second) };
             mOutputPoints.push_back(pointXYZ);
         }
     }

@@ -53,6 +53,11 @@ namespace camel
 
         std::vector<Point3> GetOutputPoints() const;
 
+        void SetDefaultCameraPosition(float t265PoseZ, float d435PoseX, float d435PoseY, float d435PoseZ);
+        void SetCurrentOdom(float poseX, float poseY, float poseZ, float quaternionX, float quaternionY, float quaternionZ, float quaternionW);
+        float* GetDefaultCameraPosition();
+        float* GetCurrentOdom();
+
         std::vector<Point3> SamplingPointsWithRotate(int samplingNum, float rotationDegree);
         std::vector<Point3> SamplingPoints(int samplingNum);
         void MakeHeightMap(Point3& point);
@@ -64,6 +69,9 @@ namespace camel
     private:
         double mResolution;
         BoundingBox mBoundingBox;
+
+        float mCurrentOdom[7];
+        float mCameraPosition[4];
 
 //	std::unordered_map<std::pair<float, float>, float> mMapDataPair; // not allowed. ref : https://www.techiedelight.com/use-std-pair-key-std-unordered_map-cpp/
         std::unordered_map<std::pair<float, float>, float, pair_hash> mMapDataPair;

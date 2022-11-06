@@ -41,5 +41,4 @@ namespace camel
     MapTreeNodeROS::~MapTreeNodeROS()
     {
     }
-
 }

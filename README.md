@@ -148,4 +148,4 @@ You can set your own Capacity value sing function _SetCapacity()_ or at construc
 - _**SetBoundaryKey(**_ _float x, float z, float w, float h_ _**)**_
 - _**SetDepth(**_ _int depth_ _**)**_
 - _**SetCapacity(**_ _int capacity_ _**)**_
-- _**InsertMapTreeNode(**_ _std::vector<Point3*> points_ _**)**_
+- _**insertMapTreeNode(**_ _std::vector<Point3*> points_ _**)**_

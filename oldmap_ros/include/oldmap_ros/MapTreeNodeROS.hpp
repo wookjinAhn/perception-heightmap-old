@@ -25,6 +25,8 @@ namespace camel
         MapTreeNodeROS(BoundingBox& boundingBox, int depth);
         MapTreeNodeROS(BoundingBox& boundingBox);
         ~MapTreeNodeROS();
+
+    private:
     };
 
 }

@@ -99,7 +99,7 @@ namespace camel
 
     void MapDataNodeROS::ToMessagePointCloud2(std::string frame_id, sensor_msgs::PointCloud2& output_pointcloud2)
     {
-        MakeMapToPoints();
+        std::cout << "OutputPoints : " << GetOutputPoints().size() << std::endl;
 
         sensor_msgs::PointCloud pointcloud_msgs;
 
@@ -120,30 +120,29 @@ namespace camel
     void MapDataNodeROS::ToHeightmapMsgs(std::string frame_id, oldmap_msgs::Oldmap& heightmap_msgs, float cameraHeight)
     {
         std::cout << "ToHeightmapMsgs" << std::endl;
-        MakeMapToPoints();
+        std::vector<Point3> output = GetOutputPoints();
+        for (auto& iter : output)
+        {
+            float x = -(iter.GetY());
+            float y = -(iter.GetZ());
+            float z = iter.GetX();
+
+            iter.SetXYZ(x, y, z);
+        }
 
         std::cout << "ToHeightmapMsgs : to msg" << std::endl;
 
         heightmap_msgs.header.frame_id = frame_id;           // header
         heightmap_msgs.header.stamp = ros::Time::now();
         heightmap_msgs.resolution = 0.03;
-        heightmap_msgs.points.resize(GetOutputPoints().size());
+        heightmap_msgs.points.resize(output.size());
 
-        float rotationMatrix[3][3] = {{ 1.0f, 0.0f, 0.0f },
-                                      { 0.0f, (float)std::cos(mRotateDegree * D2R), (float)-std::sin(mRotateDegree * D2R) },
-                                      { 0.0f, (float)std::sin(mRotateDegree * D2R), (float)std::cos(mRotateDegree * D2R) }};
-
-        for (int i = 0; i < this->GetOutputPoints().size(); i++)
+        for (int i = 0; i < output.size(); i++)
         {
-            float x = GetOutputPoints()[i].GetX();
-            float y = GetOutputPoints()[i].GetY();
-            float z = GetOutputPoints()[i].GetZ();
-            heightmap_msgs.points[i].x = rotationMatrix[0][0] * x + rotationMatrix[0][1] * y + rotationMatrix[0][2] * z;
-            heightmap_msgs.points[i].y = -(cameraHeight - (rotationMatrix[1][0] * x + rotationMatrix[1][1] * y + rotationMatrix[1][2] * z));
-            heightmap_msgs.points[i].z = rotationMatrix[2][0] * x + rotationMatrix[2][1] * y + rotationMatrix[2][2] * z;
-
-            camel::Point3 pastPoint = { x, y, z };
-            mPastData.push_back(pastPoint);
+            Point3 outData = output[i];
+            heightmap_msgs.points[i].x = outData.GetX();
+            heightmap_msgs.points[i].y = outData.GetY() - (GetDefaultCameraPosition()[0]);
+            heightmap_msgs.points[i].z = outData.GetZ();
         }
     }
 }
